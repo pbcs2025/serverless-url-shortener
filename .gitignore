@@ -1,0 +1,22 @@
+# Node
+node_modules/
+npm-debug.log
+
+# React build output (don't commit build files)
+frontend/url-shortener-frontend/build/
+
+# Environment variables — NEVER commit these
+.env
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+
+# AWS
+.aws/
+
+# OS files
+.DS_Store
+Thumbs.db
