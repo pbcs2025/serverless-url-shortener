@@ -1,0 +1,130 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "URLShortenerAPI",
+    "description": "REST API for the Serverless URL Shortener",
+    "version": "1.0"
+  },
+  "servers": [
+    {
+      "url": "https://{apiId}.execute-api.ap-south-1.amazonaws.com/prod",
+      "variables": {
+        "apiId": {
+          "default": "REPLACE_WITH_YOUR_API_ID"
+        }
+      }
+    }
+  ],
+  "paths": {
+    "/shorten": {
+      "post": {
+        "summary": "Shorten a long URL",
+        "description": "Accepts a long URL and returns a shortened version",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["longURL"],
+                "properties": {
+                  "longURL": {
+                    "type": "string",
+                    "example": "https://www.example.com/very/long/url"
+                  },
+                  "customCode": {
+                    "type": "string",
+                    "example": "mylink"
+                  },
+                  "expirySeconds": {
+                    "type": "integer",
+                    "example": 3600
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "URL shortened successfully",
+            "content": {
+              "application/json": {
+                "example": {
+                  "shortURL": "https://api.execute-api.ap-south-1.amazonaws.com/prod/abc123",
+                  "shortCode": "abc123"
+                }
+              }
+            }
+          },
+          "400": { "description": "Invalid or missing URL" },
+          "409": { "description": "Custom short code already exists" },
+          "500": { "description": "Internal server error" }
+        },
+        "x-amazon-apigateway-integration": {
+          "type": "aws_proxy",
+          "httpMethod": "POST",
+          "uri": "arn:aws:apigateway:ap-south-1:lambda:path/2015-03-31/functions/arn:aws:lambda:ap-south-1:ACCOUNT_ID:function:shorten_url/invocations"
+        }
+      }
+    },
+    "/{shortCode}": {
+      "get": {
+        "summary": "Redirect to original URL",
+        "parameters": [
+          {
+            "name": "shortCode",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "301": { "description": "Redirect to original URL" },
+          "404": { "description": "Short URL not found" },
+          "410": { "description": "Short URL has expired" }
+        },
+        "x-amazon-apigateway-integration": {
+          "type": "aws_proxy",
+          "httpMethod": "POST",
+          "uri": "arn:aws:apigateway:ap-south-1:lambda:path/2015-03-31/functions/arn:aws:lambda:ap-south-1:ACCOUNT_ID:function:redirect_url/invocations"
+        }
+      }
+    },
+    "/stats/{shortCode}": {
+      "get": {
+        "summary": "Get stats for a short URL",
+        "parameters": [
+          {
+            "name": "shortCode",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Stats returned successfully",
+            "content": {
+              "application/json": {
+                "example": {
+                  "shortCode": "abc123",
+                  "longURL": "https://www.example.com",
+                  "clickCount": 47,
+                  "createdAt": "2024-11-15T10:30:00Z",
+                  "expiryAt": "No expiry"
+                }
+              }
+            }
+          },
+          "404": { "description": "Short URL not found" }
+        },
+        "x-amazon-apigateway-integration": {
+          "type": "aws_proxy",
+          "httpMethod": "POST",
+          "uri": "arn:aws:apigateway:ap-south-1:lambda:path/2015-03-31/functions/arn:aws:lambda:ap-south-1:ACCOUNT_ID:function:get_stats/invocations"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,75 @@
+{
+  "TableName": "URLMappings",
+  "KeySchema": [
+    {
+      "AttributeName": "shortCode",
+      "KeyType": "HASH"
+    }
+  ],
+  "AttributeDefinitions": [
+    {
+      "AttributeName": "shortCode",
+      "AttributeType": "S"
+    },
+    {
+      "AttributeName": "createdAt",
+      "AttributeType": "S"
+    }
+  ],
+  "BillingMode": "PAY_PER_REQUEST",
+  "GlobalSecondaryIndexes": [
+    {
+      "IndexName": "createdAt-index",
+      "KeySchema": [
+        {
+          "AttributeName": "createdAt",
+          "KeyType": "HASH"
+        }
+      ],
+      "Projection": {
+        "ProjectionType": "ALL"
+      }
+    }
+  ],
+  "TimeToLiveSpecification": {
+    "AttributeName": "expiryAt",
+    "Enabled": true
+  },
+  "TableAttributes": {
+    "shortCode": {
+      "type": "String",
+      "role": "PRIMARY KEY (Partition Key)",
+      "example": "abc123"
+    },
+    "longURL": {
+      "type": "String",
+      "role": "Original URL entered by user",
+      "example": "https://www.example.com/very/long/url/path"
+    },
+    "createdAt": {
+      "type": "String",
+      "role": "ISO timestamp of when URL was created",
+      "example": "2024-11-15T10:30:00Z"
+    },
+    "expiryAt": {
+      "type": "Number",
+      "role": "Unix timestamp for TTL auto-delete (optional)",
+      "example": 1732012200
+    },
+    "clickCount": {
+      "type": "Number",
+      "role": "Total number of redirects (atomic counter)",
+      "example": 47
+    },
+    "customCode": {
+      "type": "Boolean",
+      "role": "True if user provided a custom short code",
+      "example": false
+    },
+    "ipAddress": {
+      "type": "String",
+      "role": "IP of creator (for rate limiting — optional)",
+      "example": "192.168.1.1"
+    }
+  }
+}

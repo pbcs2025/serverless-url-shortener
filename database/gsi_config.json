@@ -1,0 +1,24 @@
+{
+  "TableName": "URLMappings",
+  "GlobalSecondaryIndexes": [
+    {
+      "IndexName": "createdAt-index",
+      "KeySchema": [
+        {
+          "AttributeName": "createdAt",
+          "KeyType": "HASH"
+        }
+      ],
+      "Projection": {
+        "ProjectionType": "ALL"
+      },
+      "Purpose": "Allows querying all URLs sorted by creation time for the admin dashboard"
+    }
+  ],
+  "Notes": {
+    "PrimaryKey": "shortCode is the partition key — every lookup is by shortCode, giving O(1) speed.",
+    "TTL": "expiryAt stores a Unix timestamp. DynamoDB TTL auto-deletes items when current time exceeds this value.",
+    "ClickCount": "clickCount uses DynamoDB UpdateItem with ADD operation for atomic, thread-safe increment.",
+    "GSI": "GSI on createdAt allows querying all URLs in chronological order for admin views."
+  }
+}

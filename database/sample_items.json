@@ -1,0 +1,30 @@
+{
+  "TableName": "URLMappings",
+  "SampleItems": [
+    {
+      "shortCode": { "S": "abc123" },
+      "longURL":   { "S": "https://www.amazon.in/dp/B09G9YL5K7?ref=nav_product_1" },
+      "createdAt": { "S": "2024-11-15T10:30:00Z" },
+      "expiryAt":  { "N": "1732012200" },
+      "clickCount":{ "N": "0" },
+      "customCode":{ "BOOL": false },
+      "ipAddress": { "S": "49.37.24.10" }
+    },
+    {
+      "shortCode": { "S": "mylink" },
+      "longURL":   { "S": "https://www.google.com/search?q=serverless+aws" },
+      "createdAt": { "S": "2024-11-16T08:00:00Z" },
+      "clickCount":{ "N": "12" },
+      "customCode":{ "BOOL": true },
+      "ipAddress": { "S": "103.21.54.11" }
+    },
+    {
+      "shortCode": { "S": "xk9pL2" },
+      "longURL":   { "S": "https://docs.aws.amazon.com/lambda/latest/dg/welcome.html" },
+      "createdAt": { "S": "2024-11-17T14:22:00Z" },
+      "clickCount":{ "N": "5" },
+      "customCode":{ "BOOL": false },
+      "ipAddress": { "S": "49.37.24.10" }
+    }
+  ]
+}

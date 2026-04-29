@@ -1,0 +1,134 @@
+{
+  "info": {
+    "name": "Serverless URL Shortener API",
+    "description": "Postman collection for testing all 3 API Gateway endpoints",
+    "_postman_id": "url-shortener-collection",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "BASE_URL",
+      "value": "https://REPLACE_WITH_YOUR_API_ID.execute-api.ap-south-1.amazonaws.com/prod",
+      "type": "string"
+    },
+    {
+      "key": "SHORT_CODE",
+      "value": "abc123",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "TC01 - Shorten valid HTTPS URL",
+      "request": {
+        "method": "POST",
+        "url": "{{BASE_URL}}/shorten",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"longURL\": \"https://www.google.com\"}"
+        }
+      }
+    },
+    {
+      "name": "TC02 - Shorten valid HTTP URL",
+      "request": {
+        "method": "POST",
+        "url": "{{BASE_URL}}/shorten",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"longURL\": \"http://example.com\"}"
+        }
+      }
+    },
+    {
+      "name": "TC03 - Shorten invalid URL (expect 400)",
+      "request": {
+        "method": "POST",
+        "url": "{{BASE_URL}}/shorten",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"longURL\": \"notaurl\"}"
+        }
+      }
+    },
+    {
+      "name": "TC04 - Empty request body (expect 400)",
+      "request": {
+        "method": "POST",
+        "url": "{{BASE_URL}}/shorten",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        }
+      }
+    },
+    {
+      "name": "TC05 - Custom short code",
+      "request": {
+        "method": "POST",
+        "url": "{{BASE_URL}}/shorten",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"longURL\": \"https://www.github.com\", \"customCode\": \"mylink\"}"
+        }
+      }
+    },
+    {
+      "name": "TC06 - Duplicate custom code (expect 409)",
+      "request": {
+        "method": "POST",
+        "url": "{{BASE_URL}}/shorten",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"longURL\": \"https://www.github.com\", \"customCode\": \"mylink\"}"
+        }
+      }
+    },
+    {
+      "name": "TC07 - Redirect valid short code (expect 301)",
+      "request": {
+        "method": "GET",
+        "url": "{{BASE_URL}}/{{SHORT_CODE}}"
+      }
+    },
+    {
+      "name": "TC08 - Redirect unknown code (expect 404)",
+      "request": {
+        "method": "GET",
+        "url": "{{BASE_URL}}/xxxxxx"
+      }
+    },
+    {
+      "name": "TC09 - URL with expiry (1 min)",
+      "request": {
+        "method": "POST",
+        "url": "{{BASE_URL}}/shorten",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"longURL\": \"https://www.example.com\", \"expirySeconds\": 60}"
+        }
+      }
+    },
+    {
+      "name": "TC11 - Get stats for valid short code",
+      "request": {
+        "method": "GET",
+        "url": "{{BASE_URL}}/stats/{{SHORT_CODE}}"
+      }
+    },
+    {
+      "name": "TC12 - Get stats for invalid code (expect 404)",
+      "request": {
+        "method": "GET",
+        "url": "{{BASE_URL}}/stats/badcode"
+      }
+    }
+  ]
+}
