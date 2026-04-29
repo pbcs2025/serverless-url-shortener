@@ -1,12 +1,10 @@
-import json
-import boto3
-import os
+import json, boto3, os
 
 dynamodb = boto3.resource('dynamodb')
-table = dynamodb.Table(os.environ.get('TABLE_NAME', 'URLMappings'))
+table = dynamodb.Table(os.environ['TABLE_NAME'])
 
 def lambda_handler(event, context):
-    short_code = event.get('pathParameters', {}).get('shortCode', '')
+    short_code = event['pathParameters'].get('shortCode', '')
 
     result = table.get_item(Key={'shortCode': short_code})
     item = result.get('Item')
@@ -18,7 +16,6 @@ def lambda_handler(event, context):
             'body': json.dumps({'error': 'Not found'})
         }
 
-    # Return the metadata for the dashboard [cite: 306]
     return {
         'statusCode': 200,
         'headers': {'Access-Control-Allow-Origin': '*'},
