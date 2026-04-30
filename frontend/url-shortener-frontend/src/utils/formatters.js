@@ -14,7 +14,10 @@ export const formatDate = (isoString) => {
 // Format Unix timestamp (seconds) to readable date
 export const formatUnixTimestamp = (unixTs) => {
   if (!unixTs || unixTs === 'No expiry') return 'Never';
-  const date = new Date(parseInt(unixTs, 10) * 1000);
+  const timestamp = Number(unixTs);
+  const milliseconds = timestamp > 10_000_000_000 ? timestamp : timestamp * 1000;
+  const date = new Date(milliseconds);
+  if (Number.isNaN(date.getTime())) return 'Never';
   return date.toLocaleString('en-IN', {
     day: '2-digit',
     month: 'short',
@@ -33,8 +36,9 @@ export const truncateURL = (url, maxLen = 55) => {
 // Expiry seconds to human-readable label
 export const expiryLabel = (seconds) => {
   if (!seconds) return 'No expiry';
-  const hours = seconds / 3600;
+  const totalSeconds = Number(seconds);
+  const hours = Math.round(totalSeconds / 3600);
   if (hours < 24) return `${hours}h`;
-  const days = hours / 24;
+  const days = Math.round(hours / 24);
   return `${days}d`;
 };

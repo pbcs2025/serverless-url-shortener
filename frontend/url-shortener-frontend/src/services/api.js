@@ -1,11 +1,13 @@
 import axios from 'axios';
 
-// Reads from .env — REACT_APP_API_URL must be set
-const API_URL = process.env.REACT_APP_API_URL;
+const API_URL =
+  process.env.REACT_APP_API_URL ||
+  'https://05rndb0vge.execute-api.ap-south-1.amazonaws.com/prod';
 
-if (!API_URL) {
-  console.error('[SwiftLink] REACT_APP_API_URL is not set in your .env file!');
-}
+const apiClient = axios.create({
+  baseURL: API_URL,
+  headers: { 'Content-Type': 'application/json' },
+});
 
 // ── Shorten a long URL ──────────────────────────────────────────
 // POST /shorten
@@ -15,16 +17,14 @@ export const shortenURL = async (longURL, customCode = '', expirySeconds = null)
   if (customCode && customCode.trim()) payload.customCode = customCode.trim();
   if (expirySeconds) payload.expirySeconds = parseInt(expirySeconds, 10);
 
-  const res = await axios.post(`${API_URL}/shorten`, payload, {
-    headers: { 'Content-Type': 'application/json' },
-  });
+  const res = await apiClient.post('/shorten', payload);
   return res.data;
 };
 
 // ── Get analytics stats for a short code ───────────────────────
 // GET /stats/{shortCode}
 export const getStats = async (shortCode) => {
-  const res = await axios.get(`${API_URL}/stats/${shortCode}`);
+  const res = await apiClient.get(`/stats/${shortCode}`);
   return res.data;
 };
 
