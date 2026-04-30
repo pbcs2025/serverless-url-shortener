@@ -1,0 +1,26 @@
+.stats-card {
+  margin-top: 18px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  box-shadow: var(--shadow-card);
+}
+
+.stats-card__title {
+  margin-bottom: 12px;
+  font-size: 1.1rem;
+}
+
+.stats-card__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.stats-card__line {
+  margin-top: 8px;
+  color: var(--text-secondary);
+  word-break: break-all;
+}
