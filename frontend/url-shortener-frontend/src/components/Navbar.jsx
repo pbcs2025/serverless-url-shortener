@@ -1,11 +1,13 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { FiLink, FiBarChart2, FiSun, FiMoon, FiHome } from 'react-icons/fi';
+import { FiLink, FiBarChart2, FiSun, FiMoon, FiHome, FiUserPlus, FiLogIn, FiGrid, FiLogOut } from 'react-icons/fi';
 import { useTheme } from '../App';
+import { useAuth } from '../auth/AuthContext';
 import './Navbar.css';
 
 export default function Navbar() {
   const { theme, toggleTheme } = useTheme();
+  const { isAuthed, signOut } = useAuth();
 
   return (
     <nav className="navbar">
@@ -42,6 +44,38 @@ export default function Navbar() {
             <FiBarChart2 size={15} />
             <span>Analytics</span>
           </NavLink>
+          {isAuthed ? (
+            <NavLink
+              to="/dashboard"
+              className={({ isActive }) =>
+                `navbar__link${isActive ? ' navbar__link--active' : ''}`
+              }
+            >
+              <FiGrid size={15} />
+              <span>Dashboard</span>
+            </NavLink>
+          ) : (
+            <>
+              <NavLink
+                to="/login"
+                className={({ isActive }) =>
+                  `navbar__link${isActive ? ' navbar__link--active' : ''}`
+                }
+              >
+                <FiLogIn size={15} />
+                <span>Login</span>
+              </NavLink>
+              <NavLink
+                to="/signup"
+                className={({ isActive }) =>
+                  `navbar__link${isActive ? ' navbar__link--active' : ''}`
+                }
+              >
+                <FiUserPlus size={15} />
+                <span>Sign up</span>
+              </NavLink>
+            </>
+          )}
         </div>
 
         {/* Controls */}
@@ -58,6 +92,16 @@ export default function Navbar() {
           >
             {theme === 'light' ? <FiMoon size={16} /> : <FiSun size={16} />}
           </button>
+          {isAuthed && (
+            <button
+              className="navbar__theme-btn"
+              onClick={signOut}
+              aria-label="Logout"
+              title="Logout"
+            >
+              <FiLogOut size={16} />
+            </button>
+          )}
         </div>
 
       </div>

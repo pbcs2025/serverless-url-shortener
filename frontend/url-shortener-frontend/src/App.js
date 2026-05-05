@@ -4,6 +4,11 @@ import Navbar from './components/Navbar';
 import HomePage from './pages/HomePage';
 import StatsPage from './pages/StatsPage';
 import NotFoundPage from './pages/NotFoundPage';
+import { AuthProvider } from './auth/AuthContext';
+import RequireAuth from './auth/RequireAuth';
+import LoginPage from './pages/LoginPage';
+import SignupPage from './pages/SignupPage';
+import DashboardPage from './pages/DashboardPage';
 
 // ── Theme Context ──────────────────────────────────────────────
 export const ThemeContext = createContext();
@@ -29,19 +34,31 @@ export default function App() {
 
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme }}>
-      <Router>
-        <div className="app-layout">
-          <Navbar />
-          <main className="app-main">
-            <Routes>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/stats" element={<StatsPage />} />
-              <Route path="/stats/:shortCode" element={<StatsPage />} />
-              <Route path="*" element={<NotFoundPage />} />
-            </Routes>
-          </main>
-        </div>
-      </Router>
+      <AuthProvider>
+        <Router>
+          <div className="app-layout">
+            <Navbar />
+            <main className="app-main">
+              <Routes>
+                <Route path="/" element={<HomePage />} />
+                <Route path="/stats" element={<StatsPage />} />
+                <Route path="/stats/:shortCode" element={<StatsPage />} />
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/signup" element={<SignupPage />} />
+                <Route
+                  path="/dashboard"
+                  element={
+                    <RequireAuth>
+                      <DashboardPage />
+                    </RequireAuth>
+                  }
+                />
+                <Route path="*" element={<NotFoundPage />} />
+              </Routes>
+            </main>
+          </div>
+        </Router>
+      </AuthProvider>
     </ThemeContext.Provider>
   );
 }
