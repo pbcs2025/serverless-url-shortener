@@ -1,39 +1,40 @@
-import React, { useState, useEffect, createContext, useContext } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import './App.css';
 import Navbar from './components/Navbar';
-import HomePage from './pages/HomePage';
-import StatsPage from './pages/StatsPage';
-import NotFoundPage from './pages/NotFoundPage';
 import { AuthProvider } from './auth/AuthContext';
 import RequireAuth from './auth/RequireAuth';
-import LoginPage from './pages/LoginPage';
-import SignupPage from './pages/SignupPage';
 import DashboardPage from './pages/DashboardPage';
+import HomePage from './pages/HomePage';
+import LoginPage from './pages/LoginPage';
+import NotFoundPage from './pages/NotFoundPage';
+import SignupPage from './pages/SignupPage';
+import StatsPage from './pages/StatsPage';
 
-// ── Theme Context ──────────────────────────────────────────────
-export const ThemeContext = createContext();
+const ThemeContext = createContext(null);
 
 export function useTheme() {
   return useContext(ThemeContext);
 }
 
-// ── App Root ───────────────────────────────────────────────────
 export default function App() {
-  const [theme, setTheme] = useState(() => {
-    return localStorage.getItem('swiftlink-theme') || 'light';
-  });
+  const [theme, setTheme] = useState(() => localStorage.getItem('swiftlink-theme') || 'light');
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
     localStorage.setItem('swiftlink-theme', theme);
   }, [theme]);
 
-  const toggleTheme = () => {
-    setTheme(prev => (prev === 'light' ? 'dark' : 'light'));
-  };
+  const contextValue = useMemo(
+    () => ({
+      theme,
+      toggleTheme: () => setTheme((prev) => (prev === 'light' ? 'dark' : 'light')),
+    }),
+    [theme]
+  );
 
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+    <ThemeContext.Provider value={contextValue}>
       <AuthProvider>
         <Router>
           <div className="app-layout">

@@ -8,6 +8,9 @@ React frontend (Create React App) for a serverless URL shortener backed by AWS A
 - **POST** `.../shorten` — create short link
 - **GET** `.../{shortCode}` — redirect (handled by API Gateway)
 - **GET** `.../stats/{shortCode}` — analytics
+- **POST** `.../auth/signup` — create user account (new)
+- **POST** `.../auth/login` — login (new)
+- **GET** `.../me/urls` — list logged-in user’s shortened URLs (new, requires Bearer token)
 
 ## Setup
 
@@ -39,6 +42,9 @@ Open `http://localhost:3000`.
 - `/` — shorten URL
 - `/stats` — lookup analytics by short code
 - `/stats/:shortCode` — direct analytics link
+- `/signup` — create account
+- `/login` — login
+- `/dashboard` — protected dashboard (Shorten + History tabs)
 
 ## Notes
 

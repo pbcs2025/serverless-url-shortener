@@ -1,12 +1,9 @@
 import axios from 'axios';
 import { getStoredToken } from '../auth/authStorage';
 
-// Reads from .env — REACT_APP_API_URL must be set
-const API_URL = process.env.REACT_APP_API_URL;
-
-if (!API_URL) {
-  console.error('[SwiftLink] REACT_APP_API_URL is not set in your .env file!');
-}
+const API_URL =
+  process.env.REACT_APP_API_URL ||
+  'https://05rndb0vge.execute-api.ap-south-1.amazonaws.com/prod';
 
 const client = axios.create({
   baseURL: API_URL,
