@@ -125,7 +125,35 @@ function HistoryTable({ items, loading, error, onRefresh }) {
 }
 
 export default function DashboardPage() {
-  const { user, signOut } = useAuth();
+  const { user, signOut, token } = useAuth();
+
+  // Debug: Log user object to see what's available
+  console.log('Dashboard user object:', user);
+  console.log('Dashboard token:', token);
+
+  // Helper to get display name
+  const getDisplayName = () => {
+    // First try user.name
+    if (user?.name) return user.name;
+    
+    // Then try user.email
+    if (user?.email) return user.email;
+    
+    // Try to decode JWT token to get email
+    if (token) {
+      try {
+        const parts = token.split('.');
+        if (parts.length === 3) {
+          const payload = JSON.parse(atob(parts[1].replace(/-/g, '+').replace(/_/g, '/')));
+          if (payload.email) return payload.email;
+        }
+      } catch (e) {
+        console.error('Failed to decode token:', e);
+      }
+    }
+    
+    return 'user';
+  };
 
   const [tab, setTab] = useState('shorten');
   const [result, setResult] = useState(null);
@@ -196,7 +224,7 @@ export default function DashboardPage() {
             <div>
               <div style={{ fontSize: 26, fontWeight: 900, letterSpacing: '-0.02em' }}>Dashboard</div>
               <div style={{ marginTop: 4, color: 'var(--text-secondary)', lineHeight: 1.5 }}>
-                Signed in as <span style={{ fontWeight: 900 }}>{user?.email || 'user'}</span>
+                Signed in as <span style={{ fontWeight: 900 }}>{getDisplayName()}</span>
               </div>
             </div>
           </div>
