@@ -4,7 +4,7 @@ import boto3
 import hashlib
 import hmac
 import base64
-from boto3.dynamodb.conditions import Key
+from boto3.dynamodb.conditions import Key, Attr
 
 dynamodb = boto3.resource("dynamodb")
 table = dynamodb.Table(os.environ["TABLE_NAME"])  # URLMappings
@@ -77,14 +77,26 @@ def lambda_handler(event, context):
     except Exception:
       limit = 50
 
-    resp = table.query(
-      IndexName=GSI_NAME,
-      KeyConditionExpression=Key("createdBy").eq(user_id),
-      ScanIndexForward=False,  # newest first (createdAt DESC)
-      Limit=limit,
-    )
+    try:
+      resp = table.query(
+        IndexName=GSI_NAME,
+        KeyConditionExpression=Key("createdBy").eq(user_id),
+        ScanIndexForward=False,  # newest first (createdAt DESC)
+        Limit=limit,
+      )
+      items = resp.get("Items", [])
+    except Exception as gsi_err:
+      # GSI may not exist yet — fall back to a filtered Scan
+      # This is slower but ensures the endpoint works while the GSI is being created
+      scan_resp = table.scan(
+        FilterExpression=Attr("createdBy").eq(user_id),
+        Limit=200,
+      )
+      items = scan_resp.get("Items", [])
+      # Sort by createdAt descending and apply limit
+      items.sort(key=lambda x: x.get("createdAt", ""), reverse=True)
+      items = items[:limit]
 
-    items = resp.get("Items", [])
     out = []
     for it in items:
       sc = it.get("shortCode")

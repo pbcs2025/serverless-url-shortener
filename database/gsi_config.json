@@ -13,12 +13,30 @@
         "ProjectionType": "ALL"
       },
       "Purpose": "Allows querying all URLs sorted by creation time for the admin dashboard"
+    },
+    {
+      "IndexName": "createdBy-createdAt-index",
+      "KeySchema": [
+        {
+          "AttributeName": "createdBy",
+          "KeyType": "HASH"
+        },
+        {
+          "AttributeName": "createdAt",
+          "KeyType": "RANGE"
+        }
+      ],
+      "Projection": {
+        "ProjectionType": "ALL"
+      },
+      "Purpose": "Allows querying all URLs created by a specific user, sorted by creation time (newest first). Used by list_my_urls Lambda for the Dashboard history tab."
     }
   ],
   "Notes": {
     "PrimaryKey": "shortCode is the partition key — every lookup is by shortCode, giving O(1) speed.",
     "TTL": "expiryAt stores a Unix timestamp. DynamoDB TTL auto-deletes items when current time exceeds this value.",
     "ClickCount": "clickCount uses DynamoDB UpdateItem with ADD operation for atomic, thread-safe increment.",
-    "GSI": "GSI on createdAt allows querying all URLs in chronological order for admin views."
+    "GSI_createdAt": "GSI on createdAt allows querying all URLs in chronological order for admin views.",
+    "GSI_createdBy": "GSI on createdBy (PK) + createdAt (SK) allows per-user URL history queries. Required for the /me/urls endpoint."
   }
 }

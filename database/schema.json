@@ -14,6 +14,10 @@
     {
       "AttributeName": "createdAt",
       "AttributeType": "S"
+    },
+    {
+      "AttributeName": "createdBy",
+      "AttributeType": "S"
     }
   ],
   "BillingMode": "PAY_PER_REQUEST",
@@ -24,6 +28,22 @@
         {
           "AttributeName": "createdAt",
           "KeyType": "HASH"
+        }
+      ],
+      "Projection": {
+        "ProjectionType": "ALL"
+      }
+    },
+    {
+      "IndexName": "createdBy-createdAt-index",
+      "KeySchema": [
+        {
+          "AttributeName": "createdBy",
+          "KeyType": "HASH"
+        },
+        {
+          "AttributeName": "createdAt",
+          "KeyType": "RANGE"
         }
       ],
       "Projection": {
@@ -65,6 +85,11 @@
       "type": "Boolean",
       "role": "True if user provided a custom short code",
       "example": false
+    },
+    "createdBy": {
+      "type": "String",
+      "role": "User ID (sub) of the authenticated user who created the URL. Used as PK in createdBy-createdAt-index GSI.",
+      "example": "user@example.com"
     },
     "ipAddress": {
       "type": "String",

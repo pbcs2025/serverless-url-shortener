@@ -77,7 +77,7 @@ function HistoryTable({ items, loading, error, onRefresh }) {
         <div style={{ padding: 14, color: 'var(--accent-danger)' }}>{error}</div>
       ) : items.length === 0 ? (
         <div style={{ padding: 14, color: 'var(--text-secondary)' }}>
-          No saved links yet. Create one in the “Shorten” tab.
+          No saved links yet. Create one in the "Shorten" tab.
         </div>
       ) : (
         <div style={{ overflowX: 'auto' }}>
@@ -94,19 +94,26 @@ function HistoryTable({ items, loading, error, onRefresh }) {
               {items.map((it) => (
                 <tr key={it.shortCode} style={{ borderTop: '1px solid var(--border-color)' }}>
                   <td style={{ padding: 12, fontWeight: 900 }}>
-                    <a href={it.shortURL} target="_blank" rel="noreferrer">
+                    <a href={it.shortUrl ?? it.shortURL} target="_blank" rel="noreferrer">
                       {it.shortCode}
                     </a>
                   </td>
                   <td style={{ padding: 12, color: 'var(--text-secondary)', maxWidth: 520 }}>
-                    <a href={it.longURL} target="_blank" rel="noreferrer" style={{ wordBreak: 'break-word' }}>
-                      {it.longURL}
+                    <a
+                      href={it.longURL ?? it.originalUrl ?? it.originalURL ?? '#'}
+                      target="_blank"
+                      rel="noreferrer"
+                      style={{ wordBreak: 'break-word' }}
+                    >
+                      {it.longURL ?? it.originalUrl ?? it.originalURL ?? '—'}
                     </a>
                   </td>
                   <td style={{ padding: 12, color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>
                     {it.createdAt ? new Date(it.createdAt).toLocaleString() : '—'}
                   </td>
-                  <td style={{ padding: 12, color: 'var(--text-secondary)' }}>{it.clickCount ?? 0}</td>
+                  <td style={{ padding: 12, color: 'var(--text-secondary)' }}>
+                    {it.clicks ?? it.clickCount ?? 0}
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -120,7 +127,7 @@ function HistoryTable({ items, loading, error, onRefresh }) {
 export default function DashboardPage() {
   const { user, signOut } = useAuth();
 
-  const [tab, setTab] = useState('shorten'); // 'shorten' | 'history'
+  const [tab, setTab] = useState('shorten');
   const [result, setResult] = useState(null);
 
   const [historyLoading, setHistoryLoading] = useState(false);
@@ -136,7 +143,9 @@ export default function DashboardPage() {
       setHistory(Array.isArray(items) ? items : []);
     } catch (err) {
       setHistoryError(
-        err.response?.data?.error || err.response?.data?.message || 'Failed to load your history.'
+        err.response?.data?.error ||
+        err.response?.data?.message ||
+        'Failed to load your history.'
       );
       setHistory([]);
     } finally {
@@ -248,4 +257,3 @@ export default function DashboardPage() {
     </section>
   );
 }
-
